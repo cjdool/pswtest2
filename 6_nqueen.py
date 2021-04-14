@@ -1,66 +1,41 @@
 import sys
-import copy
+
+
+def ck(row, col):
+    if ck_col[col] == 1:
+        return False
+    if ck_dig[row + col] == 1:
+        return False
+    if ck_dig2[row - col + N-1] == 1:
+        return False
+    return True
+
+
+def dfs(row):
+    if row == N:
+        return 1
+    result = 0
+    for col in range(N):
+        if ck(row, col):
+            D[row][col] = 1
+            ck_col[col] = 1
+            ck_dig[row + col] = 1
+            ck_dig2[row - col + N-1] = 1
+            result += dfs(row + 1)
+            D[row][col] = 0
+            ck_col[col] = 0
+            ck_dig[row + col] = 0
+            ck_dig2[row - col + N-1] = 0
+    return result
+
 
 N = int(sys.stdin.readline())
+D = [[0]*N for _ in range(N)]
+ck_col = [0] * N
+ck_dig = [0] * (2*N-1)
+ck_dig2 = [0] * (2*N-1)
+print(dfs(0))
 
-answerlist = []
-
-def basic_dfs(rootx, rooty):
-    stack = [[(rootx, rooty)]]
-
-    while stack:
-        qlist = stack.pop()
-
-        if len(qlist) == N:
-            flag = True
-            qlist.sort(key=lambda tup: tup[0])
-            for ans in answerlist:
-                if ans == qlist:
-                    flag = False
-                    break
-            if flag:
-                answerlist.append(qlist)
-            continue
-
-        pos = []
-        for i in range(N):
-            for j in range(N):
-                flag = True
-                for queenx, queeny in qlist:
-                    if flag:
-                        # 가로
-                        if queenx == i:
-                            flag = False
-                            break
-                        # 세로
-                        if queeny == j:
-                            flag = False
-                            break
-                        # 대각1
-                        if queenx + queeny == i + j:
-                            flag = False
-                            break
-                        # 대각2
-                        if queenx - queeny == i - j:
-                            flag = False
-                            break
-                if flag:
-                    pos.append((i, j))
-
-        for x, y in pos:
-            qlist2 = copy.deepcopy(qlist)
-            qlist2.append((x, y))
-            stack.append(qlist2)
-    return
-
-
-for i in range(N):
-    for j in range(N):
-        basic_dfs(i, j)
-print(len(answerlist))
-
-
-
-
-
-
+'''
+https://hazung.tistory.com/128
+'''

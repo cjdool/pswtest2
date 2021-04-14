@@ -204,6 +204,6 @@ def dijkstra(graph, start):
     return distances
 
 '''
-다시 풀 리스트: 1, 20
+다시 풀 리스트: 1, 6, 20
 
 '''
