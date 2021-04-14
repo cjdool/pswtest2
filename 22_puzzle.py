@@ -1,52 +1,58 @@
 import sys
 from collections import deque
-import copy
 
-def checknextstate(vis, nxt):
-    for vi in vis:
-        if vi == nxt:
-            return False
-    return True
-
-
-state = []
-
+state = ''
 for i in range(3):
-    state.append(list(map(int, sys.stdin.readline().split())))
+    state += ''.join(sys.stdin.readline().split())
 
-answer = [[1,2,3],[4,5,6],[7,8,0]]
-visitedstate = []
 queue = deque()
-queue.append((copy.deepcopy(state), 0))
+queue.append(state)
+visited = {state : 0}
 
 flag = True
 while queue:
-    curstate, cnt = queue.popleft()
-    visitedstate.append(copy.deepcopy(curstate))
+    curstate = queue.popleft()
+    cnt = visited.get(curstate)
+    x = curstate.index('0')
 
-    if curstate == answer:
+    if curstate == '123456780':
         print(cnt)
         flag = False
         break
 
-    bx = 0
-    by = 0
-    for i in range(3):
-        for j in range(3):
-            if curstate[i][j] == 0:
-                bx = i
-                by = j
-                break
+    cnt += 1
+    i = x // 3
+    j = x % 3
 
-    nx = [bx-1, bx+1, bx, bx]
-    ny = [by, by, by-1, by+1]
-    for x, y in zip(nx, ny):
-        if 0 <= x < 3 and 0 <= y < 3:
-            nextstate = copy.deepcopy(curstate)
-            nextstate[bx][by] = curstate[x][y]
-            nextstate[x][y] = 0
-            if checknextstate(visitedstate, nextstate):
-                queue.append((nextstate, cnt+1))
+    curstatelist = list(curstate)
+    if i > 0:
+        curstatelist[x], curstatelist[x-3] = curstatelist[x-3], curstatelist[x]
+        nxtstatedict = ''.join(curstatelist)
+        if not visited.get(nxtstatedict):
+            visited[nxtstatedict] = cnt
+            queue.append(nxtstatedict)
+        curstatelist[x], curstatelist[x-3] = curstatelist[x-3], curstatelist[x]
+    if i < 2:
+        curstatelist[x], curstatelist[x+3] = curstatelist[x+3], curstatelist[x]
+        nxtstatedict = ''.join(curstatelist)
+        if not visited.get(nxtstatedict):
+            visited[nxtstatedict] = cnt
+            queue.append(nxtstatedict)
+        curstatelist[x], curstatelist[x+3] = curstatelist[x+3], curstatelist[x]
+    if j > 0:
+        curstatelist[x], curstatelist[x-1] = curstatelist[x-1], curstatelist[x]
+        nxtstatedict = ''.join(curstatelist)
+        if not visited.get(nxtstatedict):
+            visited[nxtstatedict] = cnt
+            queue.append(nxtstatedict)
+        curstatelist[x], curstatelist[x-1] = curstatelist[x-1], curstatelist[x]
+    if j < 2:
+        curstatelist[x], curstatelist[x+1] = curstatelist[x+1], curstatelist[x]
+        nxtstatedict = ''.join(curstatelist)
+        if not visited.get(nxtstatedict):
+            visited[nxtstatedict] = cnt
+            queue.append(nxtstatedict)
+        curstatelist[x], curstatelist[x+1] = curstatelist[x+1], curstatelist[x]
 
 if flag:
     print(-1)
