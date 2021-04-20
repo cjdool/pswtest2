@@ -61,7 +61,7 @@ def bfs():
         curstate = queue.popleft()
         cnt = visitedstate.get(curstate)
 
-        if cnt > 10:
+        if cnt > 9:
             return -1
 
         red = curstate.index('R')
