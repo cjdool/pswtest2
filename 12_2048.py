@@ -56,7 +56,7 @@ def move(dir):
                     pan[i][j] = 0
                     if pan[k][j] == 0:
                         pan[k][j] = temp
-                    if pan[k][j] == temp:
+                    elif pan[k][j] == temp:
                         pan[k][j] = 2 * temp
                         k -= 1
                     else:
@@ -67,7 +67,6 @@ def move(dir):
 
 def dfs(cnt):
     global maxval, pan
-
     if cnt == 5:
         maxval = max(maxval, max(map(max, pan)))
         return
@@ -80,7 +79,6 @@ def dfs(cnt):
 
 
 N = int(sys.stdin.readline())
-
 pan = []
 for _ in range(N):
     pan.append(list(map(int, sys.stdin.readline().split())))
@@ -88,4 +86,3 @@ for _ in range(N):
 maxval = 0
 dfs(0)
 print(maxval)
-
