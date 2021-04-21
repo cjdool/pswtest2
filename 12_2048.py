@@ -1,89 +1,82 @@
 import sys
-from collections import deque
+from copy import deepcopy
 
-def bfs():
-    queue = deque()
-    queue.append((0, pan))
-    maxval = 2
-
-    while queue:
-        cnt, curstate = queue.popleft()
-
-        if cnt == 5:
-            maxval = max(maxval, max(map(max, curstate)))
-            continue
-
-        cnt += 1
-        # left shift
-        nxtstate = [[0]*N for _ in range(N)]
+def move(dir):
+    if dir == 0: # left
         for i in range(N):
-            j = 0
             k = 0
-            while j < N-1:
-                if curstate[i][j] != 0:
-                    if curstate[i][j] == curstate[i][j+1]:
-                        nxtstate[i][k] = 2*curstate[i][j]
-                        j += 1
+            for j in range(1,N):
+                if pan[i][j]:
+                    temp = pan[i][j]
+                    pan[i][j] = 0
+                    if pan[i][k] == 0:
+                        pan[i][k] = temp
+                    elif pan[i][k] == temp:
+                        pan[i][k] = 2 * temp
+                        k += 1
                     else:
-                        nxtstate[i][k] = curstate[i][j]
-                    k += 1
-                j += 1
-            if j == N-1:
-                nxtstate[i][k] = curstate[i][j]
-        queue.append((cnt, nxtstate))
-        # right shift
-        nxtstate = [[0]*N for _ in range(N)]
+                        k += 1
+                        pan[i][k] = temp
+    elif dir == 1: # right
         for i in range(N):
-            j = N-1
             k = N-1
-            while j > 0:
-                if curstate[i][j] != 0:
-                    if curstate[i][j] == curstate[i][j-1]:
-                        nxtstate[i][k] = 2*curstate[i][j]
-                        j -= 1
+            for j in range(N-2, -1, -1):
+                if pan[i][j]:
+                    temp = pan[i][j]
+                    pan[i][j] = 0
+                    if pan[i][k] == 0:
+                        pan[i][k] = temp
+                    elif pan[i][k] == temp:
+                        pan[i][k] = 2 * temp
+                        k -= 1
                     else:
-                        nxtstate[i][k] = curstate[i][j]
-                    k -= 1
-                j -= 1
-            if j == 0:
-                nxtstate[i][k] = curstate[i][j]
-        queue.append((cnt, nxtstate))
-        # top shift
-        nxtstate = [[0]*N for _ in range(N)]
+                        k -= 1
+                        pan[i][k] = temp
+    elif dir == 2: # top
         for j in range(N):
-            i = 0
             k = 0
-            while i < N-1:
-                if curstate[i][j] != 0:
-                    if curstate[i][j] == curstate[i+1][j]:
-                        nxtstate[k][j] = 2*curstate[i][j]
-                        i += 1
+            for i in range(1, N):
+                if pan[i][j]:
+                    temp = pan[i][j]
+                    pan[i][j] = 0
+                    if pan[k][j] == 0:
+                        pan[k][j] = temp
+                    elif pan[k][j] == temp:
+                        pan[k][j] = 2 * temp
+                        k += 1
                     else:
-                        nxtstate[k][j] = curstate[i][j]
-                    k += 1
-                i += 1
-            if i == N-1:
-                nxtstate[k][j] = curstate[i][j]
-        queue.append((cnt, nxtstate))
-        # bot shift
-        nxtstate = [[0]*N for _ in range(N)]
+                        k += 1
+                        pan[k][j] = temp
+    else:
         for j in range(N):
-            i = N-1
             k = N-1
-            while i > 0:
-                if curstate[i][j] != 0:
-                    if curstate[i][j] == curstate[i-1][j]:
-                        nxtstate[k][j] = 2*curstate[i][j]
-                        i -= 1
+            for i in range(N-2, -1, -1):
+                if pan[i][j]:
+                    temp = pan[i][j]
+                    pan[i][j] = 0
+                    if pan[k][j] == 0:
+                        pan[k][j] = temp
+                    if pan[k][j] == temp:
+                        pan[k][j] = 2 * temp
+                        k -= 1
                     else:
-                        nxtstate[k][j] = curstate[i][j]
-                    k -= 1
-                i -= 1
-            if i == 0:
-                nxtstate[k][j] = curstate[i][j]
-        queue.append((cnt, nxtstate))
+                        k -= 1
+                        pan[k][j] = temp
 
-    return maxval
+
+
+def dfs(cnt):
+    global maxval, pan
+
+    if cnt == 5:
+        maxval = max(maxval, max(map(max, pan)))
+        return
+
+    temppan = deepcopy(pan)
+    for i in range(4):
+        move(i)
+        dfs(cnt+1)
+        pan = deepcopy(temppan)
 
 
 N = int(sys.stdin.readline())
@@ -92,4 +85,7 @@ pan = []
 for _ in range(N):
     pan.append(list(map(int, sys.stdin.readline().split())))
 
-print(bfs())
+maxval = 0
+dfs(0)
+print(maxval)
+
